@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Experimental video accompanying FH-Balanced dynamic docking planning.">
-  <title>FH-Balanced | Experimental Video</title>
+  <meta name="description" content="Real-vehicle experiments on two platforms accompanying FH-Balanced dynamic docking planning.">
+  <title>FH-Balanced | Real-Vehicle Experiments</title>
   <style>
     :root { color-scheme: light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #182b3c; background: #f4f6f8; }
     * { box-sizing: border-box; }
@@ -14,10 +14,11 @@
     h1 { margin: 12px 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }
     .title { max-width: 800px; margin: 0; color: #526171; font-size: clamp(1rem, 2.2vw, 1.25rem); line-height: 1.65; }
     section { margin-top: 36px; padding: 24px; background: white; border: 1px solid #dce3e9; border-radius: 12px; }
-    h2 { font-size: 1.1rem; margin: 0 0 20px; }
+    h2 { font-size: 1.25rem; margin: 0 0 14px; }
+    .description { color: #526171; line-height: 1.7; margin: 0 0 18px; }
     video { display: block; width: 100%; max-height: 72vh; background: #101923; border-radius: 6px; }
     video[hidden], [hidden] { display: none; }
-    #status { padding: 64px 20px; text-align: center; background: #f2f5f8; border-radius: 6px; color: #526171; }
+    .status { padding: 64px 20px; text-align: center; background: #f2f5f8; border-radius: 6px; color: #526171; }
     a { color: #245c88; text-underline-offset: 3px; }
     a:focus-visible { outline: 3px solid #245c88; outline-offset: 4px; }
     .download { margin: 18px 0 0; font-size: .9rem; }
@@ -32,36 +33,54 @@
       <h1>FH-Balanced</h1>
       <p class="title">Dynamic Docking Planning: Balancing Docking Efficiency and Post-Lock Same-Track Recovery</p>
     </header>
-    <section aria-labelledby="video-heading">
-      <h2 id="video-heading">Experimental video</h2>
-      <p id="status" role="status">The experimental video is currently unavailable. Please check back later.</p>
-      <video id="experiment-video" controls playsinline preload="metadata" aria-label="FH-Balanced experimental video" hidden>
-        <source id="video-source" src="video.mp4" type="video/mp4">
-        Your browser does not support embedded video. <a href="video.mp4">Download the video</a>.
+    <section data-experiment aria-labelledby="platform1-heading">
+      <h2 id="platform1-heading">Platform 1: Algorithmic feasibility</h2>
+      <p class="description">The first platform provides preliminary evidence of algorithmic feasibility. The follower executes FH-Balanced's planned approach trajectory and speed reference to complete docking with a mechanically fixed rear hitch.</p>
+      <p class="status" role="status">Loading video&hellip;</p>
+      <video controls playsinline preload="metadata" aria-label="Platform 1 docking experiment" hidden>
+        <source src="platform1.mp4" type="video/mp4">
+        Your browser does not support embedded video. <a href="platform1.mp4">Download the video</a>.
       </video>
-      <p id="download" class="download" hidden><a href="video.mp4" download>Download video (MP4)</a></p>
-      <noscript><p>JavaScript is disabled. <a href="video.mp4">Open the experimental video</a>.</p></noscript>
+      <p class="download" hidden><a href="platform1.mp4" download>Download Platform 1 video (MP4)</a></p>
+      <noscript><p><a href="platform1.mp4">Open the Platform 1 video</a>.</p></noscript>
     </section>
-    <footer>Experimental video accompanying the paper.</footer>
+    <section data-experiment aria-labelledby="platform2-heading">
+      <h2 id="platform2-heading">Platform 2: Physical docking experiment</h2>
+      <p class="description">The second platform demonstrates physical docking using the planned trajectory and speed reference. Planned docking takes 39.80 s. Excluding 64.96 s of waiting after plan publication, physical docking is completed 45.33 s after sustained motion begins, 5.53 s later than planned.</p>
+      <p class="description">Within the planned horizon, the follower rear-axle position has nearest-path and time-aligned root-mean-square errors of 0.612 m and 1.822 m, respectively. Imperfect closed-loop speed response and tracking-control errors can contribute to these spatial deviations and timing offsets.</p>
+      <p class="status" role="status">Loading video&hellip;</p>
+      <video controls playsinline preload="metadata" aria-label="Platform 2 physical docking experiment" hidden>
+        <source src="platform2.mp4" type="video/mp4">
+        Your browser does not support embedded video. <a href="platform2.mp4">Download the video</a>.
+      </video>
+      <p class="download" hidden><a href="platform2.mp4" download>Download Platform 2 video (MP4)</a></p>
+      <noscript><p><a href="platform2.mp4">Open the Platform 2 video</a>.</p></noscript>
+    </section>
+    <footer>Real-vehicle experiments accompanying the paper.</footer>
   </main>
   <script>
-    const video = document.getElementById('experiment-video');
-    const status = document.getElementById('status');
-    const download = document.getElementById('download');
-    function showVideo() {
-      video.hidden = false;
-      status.hidden = true;
-      download.hidden = false;
-    }
-    function showUnavailable() {
-      video.hidden = true;
-      status.hidden = false;
-      download.hidden = true;
-    }
-    video.addEventListener('loadedmetadata', showVideo);
-    video.addEventListener('error', showUnavailable);
-    document.getElementById('video-source').addEventListener('error', showUnavailable);
-    if (video.readyState >= 1) showVideo();
+    document.querySelectorAll('[data-experiment]').forEach((section) => {
+      const video = section.querySelector('video');
+      const status = section.querySelector('.status');
+      const download = section.querySelector('.download');
+      const source = video.querySelector('source');
+      function showVideo() {
+        video.hidden = false;
+        status.hidden = true;
+        download.hidden = false;
+      }
+      function showUnavailable() {
+        video.hidden = true;
+        status.hidden = false;
+        status.textContent = 'This experimental video is currently unavailable. Please check back later.';
+        download.hidden = true;
+      }
+      video.addEventListener('loadedmetadata', showVideo);
+      video.addEventListener('error', showUnavailable);
+      source.addEventListener('error', showUnavailable);
+      if (video.readyState >= 1) showVideo();
+      else if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) showUnavailable();
+    });
   </script>
 </body>
 </html>
